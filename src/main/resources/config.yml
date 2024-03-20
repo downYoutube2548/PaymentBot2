@@ -1,0 +1,21 @@
+mysql:
+  host: "127.0.0.1"
+  user: root
+  pass: ''
+  port: "3306"
+  useSSL: "false"
+  database: ''
+
+web-server:
+  ssl-certificate-keystore-path: ""
+  keystore-password: ""
+  port: 8080
+  path: "/webhook"
+
+discord-bot-token: "your-discord-token-here"
+
+stripe-test-key: ""
+stripe-live-key: ""
+
+endpoint-secret-test-key: ""
+endpoint-secret-live-key: ""
