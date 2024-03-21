@@ -134,7 +134,6 @@ public class YamlManager {
     }
 
     private static Object traverseYaml(Map<String, Object> data, String[] keys) {
-        // Traverse the YAML structure using keys
         Map<String, Object> current = data;
         for (String key : keys) {
             if (current.containsKey(key)) {

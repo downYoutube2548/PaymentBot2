@@ -1,7 +1,6 @@
 package com.downn_falls;
 
 import com.downn_falls.events.CommandEvent;
-import com.downn_falls.events.SelectedMenuEvent;
 import com.downn_falls.manager.YamlManager;
 import com.downn_falls.manager.database.DatabaseManager;
 import com.downn_falls.manager.database.DatabaseTimeoutFix;
@@ -9,7 +8,7 @@ import com.downn_falls.webhook.WebServer;
 import com.stripe.Stripe;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
@@ -24,7 +23,7 @@ public class PaymentBot {
 
     public static JDA jda;
 
-    public static HashMap<UUID, StringSelectInteractionEvent> sessionMap = new HashMap<>();
+    public static HashMap<UUID, SlashCommandInteractionEvent> sessionMap = new HashMap<>();
     public static boolean testMode = true;
 
     public static DatabaseManager databaseManager;
@@ -56,7 +55,7 @@ public class PaymentBot {
         jda = JDABuilder.create(YamlManager.getConfig("discord-bot-token", String.class), GatewayIntent.GUILD_MESSAGES)
                 .build();
 
-        jda.addEventListener(new CommandEvent(), new SelectedMenuEvent());
+        jda.addEventListener(new CommandEvent());
 
         jda.updateCommands().addCommands(
                 Commands.slash("topup", "Top Up")

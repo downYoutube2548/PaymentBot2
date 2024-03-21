@@ -12,7 +12,6 @@ public class DatabaseTimeoutFix {
     public static void start() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-        // Schedule the task to run every 5 minutes, starting from now
         scheduler.scheduleAtFixedRate(()-> {
             try {
                 Statement statement = PaymentBot.databaseManager.getConnection().createStatement();

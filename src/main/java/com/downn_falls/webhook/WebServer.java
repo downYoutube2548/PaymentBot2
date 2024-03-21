@@ -11,6 +11,7 @@ import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionListLineItemsParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import spark.Request;
 import spark.Response;
@@ -51,7 +52,7 @@ public class WebServer {
             return;
         }
 
-        if ("checkout.session.completed".equals(event.getType())) {
+        if ("checkout.session.completed".equals(event.getType()) || "checkout.session.expired".equals(event.getType())) {
 
             Session sessionEvent = (Session) event.getDataObjectDeserializer().getObject().orElse(null);
 
@@ -72,7 +73,13 @@ public class WebServer {
                             .build();
 
             LineItemCollection lineItems = session.listLineItems(listLineItemsParams);
-            fulfillOrder(lineItems);
+
+            if ("checkout.session.completed".equals(event.getType())) {
+                fulfillOrder(lineItems);
+            } else if ("checkout.session.expired".equals(event.getType())) {
+                UUID uuid = UUID.fromString(lineItems.getData().get(0).getPrice().getMetadata().get("order_id"));
+                PaymentBot.sessionMap.remove(uuid);
+            }
         }
 
         response.status(200);
@@ -83,7 +90,7 @@ public class WebServer {
         UUID uuid = UUID.fromString(lineItems.getData().get(0).getPrice().getMetadata().get("order_id"));
         long orderCreateTimestamp = Long.parseLong(lineItems.getData().get(0).getPrice().getMetadata().get("order_create_timestamp"));
         double amount = lineItems.getData().get(0).getPrice().getUnitAmount() / 100.0;
-        StringSelectInteractionEvent event = PaymentBot.sessionMap.get(uuid);
+        SlashCommandInteractionEvent event = PaymentBot.sessionMap.get(uuid);
 
         String username = event.getUser().getName();
         String nickname = event.getMember().getNickname();
