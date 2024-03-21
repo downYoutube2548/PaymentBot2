@@ -1,4 +1,4 @@
-package com.downn_falls.database;
+package com.downn_falls.manager.database;
 
 import com.downn_falls.PaymentBot;
 

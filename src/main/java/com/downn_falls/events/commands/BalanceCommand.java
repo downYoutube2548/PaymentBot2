@@ -1,10 +1,10 @@
 package com.downn_falls.events.commands;
 
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import com.downn_falls.events.commands.balance.AddCommand;
 import com.downn_falls.events.commands.balance.CheckCommand;
 import com.downn_falls.events.commands.balance.RemoveCommand;
 import com.downn_falls.events.commands.balance.SetCommand;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
 public class BalanceCommand implements SubCommand {
     @Override

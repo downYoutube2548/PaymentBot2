@@ -1,5 +1,7 @@
 package com.downn_falls.events;
 
+import com.downn_falls.PaymentBot;
+import com.downn_falls.utils.Utils;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Price;
 import com.stripe.model.Product;
@@ -7,14 +9,11 @@ import com.stripe.model.checkout.Session;
 import com.stripe.param.PriceCreateParams;
 import com.stripe.param.ProductCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
-import net.dv8tion.jda.api.entities.EmbedType;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import com.downn_falls.PaymentBot;
 
-import java.util.ArrayList;
 import java.util.UUID;
 
 public class SelectedMenuEvent extends ListenerAdapter {
@@ -84,47 +83,14 @@ public class SelectedMenuEvent extends ListenerAdapter {
 
                 if (session != null) {
 
-                    MessageEmbed embed = new MessageEmbed(
-                            null,
-                            "กรุณากดปุ่มด้านล่างเพื่อชำระเงิน",
-                            null,
-                            EmbedType.UNKNOWN,
-                            null,
-                            16760463,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            new ArrayList<>()
-                    );
-
-                    event.getHook().editOriginalEmbeds(embed).setActionRow(
+                    event.getHook().editOriginalEmbeds(new EmbedBuilder().setTitle("กรุณากดปุ่มด้านล่างเพื่อชำระเงิน").setColor(16760463).build()).setActionRow(
                             Button.link(session.getUrl(), "ชำระเงิน")
                     ).queue();
 
                     PaymentBot.sessionMap.put(orderId, event);
 
                 } else {
-
-                    MessageEmbed embed = new MessageEmbed(
-                            null,
-                            "เกิดข้อผิดพลาด",
-                            null,
-                            EmbedType.UNKNOWN,
-                            null,
-                            16741235,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            null,
-                            new ArrayList<>()
-                    );
-
-                    event.getHook().editOriginalEmbeds(embed).queue();
+                    event.getHook().editOriginalEmbeds(Utils.errorEmbed("เกิดข้อผิดพลาด")).queue();
                 }
 
 

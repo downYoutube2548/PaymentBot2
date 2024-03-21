@@ -1,24 +1,21 @@
 package com.downn_falls.webhook;
 
+import com.downn_falls.PaymentBot;
+import com.downn_falls.manager.YamlManager;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
-import com.stripe.model.*;
+import com.stripe.model.Event;
+import com.stripe.model.LineItemCollection;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionListLineItemsParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
-import net.dv8tion.jda.api.entities.EmbedType;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
-import com.downn_falls.PaymentBot;
-import com.downn_falls.manager.YamlManager;
 import spark.Request;
 import spark.Response;
 
-import java.sql.SQLException;
 import java.time.OffsetDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static spark.Spark.*;
@@ -40,7 +37,7 @@ public class WebServer {
         });
     }
 
-    public static void handle(Request request, Response response) throws StripeException, SQLException {
+    public static void handle(Request request, Response response) throws StripeException {
         String payload = request.body();
         String sigHeader = request.headers("Stripe-Signature");
         Event event;
@@ -81,7 +78,7 @@ public class WebServer {
         response.status(200);
     }
 
-    public static void fulfillOrder(LineItemCollection lineItems) throws SQLException {
+    public static void fulfillOrder(LineItemCollection lineItems) {
         System.out.println("Fulfilling order...");
         UUID uuid = UUID.fromString(lineItems.getData().get(0).getPrice().getMetadata().get("order_id"));
         long orderCreateTimestamp = Long.parseLong(lineItems.getData().get(0).getPrice().getMetadata().get("order_create_timestamp"));
@@ -97,46 +94,20 @@ public class WebServer {
 
             balanceData.add(amount);
 
-            MessageEmbed embed = new MessageEmbed(
-                    null,
-                    "ทำรายการสำเร็จแล้ว!!",
-                    null,
-                    EmbedType.UNKNOWN,
-                    null,
-                    65378,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new ArrayList<>()
-            );
 
-            MessageEmbed embed2 = new MessageEmbed(
-                    null,
-                    "บันทึกรายการ",
-                    "\u200e",
-                    EmbedType.UNKNOWN,
-                    OffsetDateTime.now(),
-                    7711487,
-                    null,
-                    null,
-                    null,
-                    null,
-                    new MessageEmbed.Footer(username, event.getUser().getAvatarUrl(), null),
-                    null,
-                    List.of(
-                            new MessageEmbed.Field("ชื่อลูกค้า:", nickname + " ("+ username +")", false),
-                            new MessageEmbed.Field("สร้างรายการเมื่อ:", "<t:"+orderCreateTimestamp/1000+":F>", false),
-                            new MessageEmbed.Field("จำนวนเงิน:", amount+" บาท (คงเหลือ: "+ balanceData.getBalance()+")", false),
-                            new MessageEmbed.Field("ทำรายการสำเร็จเมื่อ:", "<t:"+System.currentTimeMillis()/1000+":F>\n\u200e", false)
-                    )
-            );
-
-
-            event.getHook().editOriginalEmbeds(embed).setComponents().queue();
-            event.getChannel().asGuildMessageChannel().sendMessageEmbeds(embed2).queue();
+            event.getHook().editOriginalEmbeds(new EmbedBuilder().setTitle("ทำรายการสำเร็จแล้ว").setColor(0x00ff82).build()).setComponents().queue();
+            event.getChannel().asGuildMessageChannel().sendMessageEmbeds(new EmbedBuilder()
+                    .setTitle("บันทึกรายการ")
+                    .setDescription("\u200e")
+                    .setTimestamp(OffsetDateTime.now())
+                    .setColor(7711487)
+                    .setFooter(username, event.getUser().getAvatarUrl())
+                    .addField("ชื่อลูกค้า:", nickname + " ("+ username +")", false)
+                    .addField("สร้างรายการเมื่อ:", "<t:"+orderCreateTimestamp/1000+":F>", false)
+                    .addField("จำนวนเงิน:", amount+" บาท (คงเหลือ: "+ balanceData.getBalance()+")", false)
+                    .addField("ทำรายการสำเร็จเมื่อ:", "<t:"+System.currentTimeMillis()/1000+":F>\n\u200e", false)
+                    .build()
+            ).queue();
 
         });
 

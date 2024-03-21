@@ -1,10 +1,10 @@
-package com.downn_falls.database;
+package com.downn_falls.manager.database;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.User;
 import com.downn_falls.PaymentBot;
 import com.downn_falls.manager.BalanceData;
 import com.downn_falls.manager.YamlManager;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 
 import java.sql.*;
 import java.util.function.Consumer;
@@ -55,46 +55,51 @@ public class DatabaseManager {
         }
     }
 
-    public void load(String guildId, String userId, Consumer<BalanceData> consumer) throws SQLException {
+    public void load(String guildId, String userId, Consumer<BalanceData> consumer) {
 
-        Guild guild = PaymentBot.jda.getGuildById(guildId);
-        String guildName = guild == null ? "" : guild.getName();
+        try {
 
-        User user = PaymentBot.jda.getUserById(userId);
-        String userName = user == null ? "" : user.getName();
+            Guild guild = PaymentBot.jda.getGuildById(guildId);
+            String guildName = guild == null ? "" : guild.getName();
 
-        double balance = 0;
+            User user = PaymentBot.jda.getUserById(userId);
+            String userName = user == null ? "" : user.getName();
 
-        String table = PaymentBot.testMode ? "payment_bot_test" : "payment_bot_live";
+            double balance = 0;
 
-        PreparedStatement addDataStatement = getConnection().prepareStatement(
-                "INSERT INTO "+ table +" (GUILD_ID, USER_ID, BALANCE, GUILD_NAME, USERNAME)" +
-                        "    SELECT ?, ?, ?, ?, ?" +
-                        "    WHERE NOT EXISTS (SELECT * FROM "+ table +" WHERE GUILD_ID = ? AND USER_ID = ?);"
-        );
+            String table = PaymentBot.testMode ? "payment_bot_test" : "payment_bot_live";
 
-        addDataStatement.setString(1, guildId);
-        addDataStatement.setString(2, userId);
-        addDataStatement.setDouble(3, 0);
-        addDataStatement.setString(4, guildName);
-        addDataStatement.setString(5, userName);
-        addDataStatement.setString(6, guildId);
-        addDataStatement.setString(7, userId);
-        addDataStatement.executeUpdate();
-        addDataStatement.close();
+            PreparedStatement addDataStatement = getConnection().prepareStatement(
+                    "INSERT INTO " + table + " (GUILD_ID, USER_ID, BALANCE, GUILD_NAME, USERNAME)" +
+                            "    SELECT ?, ?, ?, ?, ?" +
+                            "    WHERE NOT EXISTS (SELECT * FROM " + table + " WHERE GUILD_ID = ? AND USER_ID = ?);"
+            );
 
-        PreparedStatement selectStatement = getConnection().prepareStatement("SELECT * FROM "+ table +" WHERE GUILD_ID = ? AND USER_ID = ?");
+            addDataStatement.setString(1, guildId);
+            addDataStatement.setString(2, userId);
+            addDataStatement.setDouble(3, 0);
+            addDataStatement.setString(4, guildName);
+            addDataStatement.setString(5, userName);
+            addDataStatement.setString(6, guildId);
+            addDataStatement.setString(7, userId);
+            addDataStatement.executeUpdate();
+            addDataStatement.close();
 
-        selectStatement.setString(1, guildId);
-        selectStatement.setString(2, userId);
-        ResultSet resultSet = selectStatement.executeQuery();
-        if (resultSet.next()) {
-            balance = resultSet.getDouble("BALANCE");
+            PreparedStatement selectStatement = getConnection().prepareStatement("SELECT * FROM " + table + " WHERE GUILD_ID = ? AND USER_ID = ?");
+
+            selectStatement.setString(1, guildId);
+            selectStatement.setString(2, userId);
+            ResultSet resultSet = selectStatement.executeQuery();
+            if (resultSet.next()) {
+                balance = resultSet.getDouble("BALANCE");
+            }
+            selectStatement.close();
+
+            consumer.accept(new BalanceData(guildId, userId, balance));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        selectStatement.close();
-
-        consumer.accept(new BalanceData(guildId, userId, balance));
-
     }
 
     public void setBalance(String guildId, String userId, double value, String guildName, String username) {

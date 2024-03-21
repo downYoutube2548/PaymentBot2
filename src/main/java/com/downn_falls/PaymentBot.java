@@ -1,6 +1,11 @@
 package com.downn_falls;
 
-import com.downn_falls.database.DatabaseManager;
+import com.downn_falls.events.CommandEvent;
+import com.downn_falls.events.SelectedMenuEvent;
+import com.downn_falls.manager.YamlManager;
+import com.downn_falls.manager.database.DatabaseManager;
+import com.downn_falls.manager.database.DatabaseTimeoutFix;
+import com.downn_falls.webhook.WebServer;
 import com.stripe.Stripe;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -9,11 +14,6 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
-import com.downn_falls.database.DatabaseTimeoutFix;
-import com.downn_falls.events.CommandEvent;
-import com.downn_falls.events.SelectedMenuEvent;
-import com.downn_falls.manager.YamlManager;
-import com.downn_falls.webhook.WebServer;
 
 import java.io.IOException;
 import java.net.ServerSocket;
