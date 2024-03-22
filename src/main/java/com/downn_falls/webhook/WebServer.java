@@ -43,7 +43,7 @@ public class WebServer {
         String sigHeader = request.headers("Stripe-Signature");
         Event event;
 
-        String endpointSecret = PaymentBot.testMode ? YamlManager.getConfig("endpoint-secret-test-key", String.class) : YamlManager.getConfig("endpoint-secret-live-key", String.class); // test: whsec_BdoXgd1wbHDWavOpkVeWD9YZU27dbl0W // real: whsec_leKkVhSN9j4BzFijISxO52Bxm6hJm7Ch
+        String endpointSecret = PaymentBot.testMode ? YamlManager.getConfig("endpoint-secret-test-key", String.class) : YamlManager.getConfig("endpoint-secret-live-key", String.class);
 
         try {
             event = Webhook.constructEvent(payload, sigHeader, endpointSecret);
