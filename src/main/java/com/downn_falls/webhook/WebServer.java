@@ -12,7 +12,6 @@ import com.stripe.param.checkout.SessionListLineItemsParams;
 import com.stripe.param.checkout.SessionRetrieveParams;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
-import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent;
 import spark.Request;
 import spark.Response;
 

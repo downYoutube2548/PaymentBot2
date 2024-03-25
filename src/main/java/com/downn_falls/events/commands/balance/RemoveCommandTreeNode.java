@@ -1,7 +1,7 @@
 package com.downn_falls.events.commands.balance;
 
 import com.downn_falls.PaymentBot;
-import com.downn_falls.events.commands.SubCommand;
+import com.downn_falls.events.commands.CommandTreeNode;
 import com.downn_falls.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -10,10 +10,13 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 import java.time.OffsetDateTime;
 
-public class AddCommand implements SubCommand {
+public class RemoveCommandTreeNode extends CommandTreeNode {
+    public RemoveCommandTreeNode(CommandTreeNode parent) {
+        super(parent, "remove");
+    }
+
     @Override
     public void run(SlashCommandInteractionEvent event) {
-
         event.deferReply().queue();
 
         if (event.getMember().hasPermission(Permission.MODERATE_MEMBERS)) {
@@ -23,10 +26,10 @@ public class AddCommand implements SubCommand {
                 double amount = event.getOption("amount").getAsDouble();
 
                 balanceData.setGuildName(event.getGuild().getName()).setUsername(user.getName());
-                balanceData.add(amount);
+                balanceData.remove(amount);
 
                 event.getHook().editOriginalEmbeds(new EmbedBuilder()
-                        .setTitle("เพิ่มยอดเงินสำเร็จ")
+                        .setTitle("ลดยอดเงินสำเร็จ")
                         .setDescription("\u200e")
                         .addField("จำนวน", amount+" บาท", false)
                         .addField("คงเหลือ", balanceData.getBalance()+" บาท\n\u200e", false)

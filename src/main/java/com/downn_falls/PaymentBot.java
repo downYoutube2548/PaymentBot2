@@ -1,6 +1,10 @@
 package com.downn_falls;
 
 import com.downn_falls.events.CommandEvent;
+import com.downn_falls.events.commands.BalanceCommandTreeNode;
+import com.downn_falls.events.commands.CommandTreeNode;
+import com.downn_falls.events.commands.TestModeCommandTreeNode;
+import com.downn_falls.events.commands.TopUpCommandTreeNode;
 import com.downn_falls.manager.YamlManager;
 import com.downn_falls.manager.database.DatabaseManager;
 import com.downn_falls.manager.database.DatabaseTimeoutFix;
@@ -25,6 +29,7 @@ public class PaymentBot {
 
     public static HashMap<UUID, SlashCommandInteractionEvent> sessionMap = new HashMap<>();
     public static boolean testMode = true;
+    public static HashMap<String, CommandTreeNode> commandMap = new HashMap<>();
 
     public static DatabaseManager databaseManager;
 
@@ -59,10 +64,10 @@ public class PaymentBot {
 
         jda.updateCommands().addCommands(
                 Commands.slash("topup", "Top Up")
-                        .addOption(OptionType.NUMBER, "price", "price", true, true),
+                        .addOption(OptionType.NUMBER, "price", "price", true, true).setGuildOnly(true),
                 Commands.slash("testmode", "switch to test mode")
-                        .addOption(OptionType.BOOLEAN, "toggle", "toggle", true),
-                Commands.slash("balance", "Check your balance")
+                        .addOption(OptionType.BOOLEAN, "toggle", "toggle", true).setGuildOnly(true),
+                Commands.slash("balance", "Check your balance").setGuildOnly(true)
                         .addSubcommands(
                                 new SubcommandData("check", "Check user's balance").addOption(OptionType.USER, "user", "User to check balance", false),
                                 new SubcommandData("add", "Add user's balance")
@@ -77,6 +82,10 @@ public class PaymentBot {
                         )
 
         ).queue();
+
+        commandMap.put("topup", new TopUpCommandTreeNode(null));
+        commandMap.put("balance", new BalanceCommandTreeNode(null));
+        commandMap.put("testmode", new TestModeCommandTreeNode(null));
 
         WebServer.start();
 

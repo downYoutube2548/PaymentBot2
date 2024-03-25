@@ -6,7 +6,11 @@ import com.stripe.Stripe;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 
-public class TestModeCommand implements SubCommand{
+public class TestModeCommandTreeNode extends CommandTreeNode {
+    public TestModeCommandTreeNode(CommandTreeNode parent) {
+        super(parent, "testmode");
+    }
+
     @Override
     public void run(SlashCommandInteractionEvent event) {
         boolean toggle = event.getOption("toggle").getAsBoolean();

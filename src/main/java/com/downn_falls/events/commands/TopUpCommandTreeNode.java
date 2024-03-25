@@ -10,15 +10,17 @@ import com.stripe.param.PriceCreateParams;
 import com.stripe.param.ProductCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
-import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public class TopUpCommand implements SubCommand {
+public class TopUpCommandTreeNode extends CommandTreeNode {
+
+    public TopUpCommandTreeNode(CommandTreeNode parent) {
+        super(parent, "topup");
+    }
 
     @Override
     public void run(SlashCommandInteractionEvent event) {

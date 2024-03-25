@@ -1,7 +1,7 @@
 package com.downn_falls.events.commands.balance;
 
 import com.downn_falls.PaymentBot;
-import com.downn_falls.events.commands.SubCommand;
+import com.downn_falls.events.commands.CommandTreeNode;
 import com.downn_falls.utils.Utils;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -10,7 +10,11 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 import java.time.OffsetDateTime;
 
-public class SetCommand implements SubCommand {
+public class SetCommandTreeNode extends CommandTreeNode {
+    public SetCommandTreeNode(CommandTreeNode parent) {
+        super(parent, "set");
+    }
+
     @Override
     public void run(SlashCommandInteractionEvent event) {
         event.deferReply().queue();
