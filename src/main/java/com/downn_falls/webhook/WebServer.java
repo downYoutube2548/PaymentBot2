@@ -92,7 +92,7 @@ public class WebServer {
         SlashCommandInteractionEvent event = PaymentBot.sessionMap.get(uuid);
 
         String username = event.getUser().getName();
-        String nickname = event.getMember().getNickname();
+        String nickname = event.getUser().getGlobalName();
 
         PaymentBot.databaseManager.load(event.getGuild().getId(), event.getUser().getId(), (balanceData) -> {
 
