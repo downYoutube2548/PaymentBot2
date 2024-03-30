@@ -40,7 +40,6 @@ public class PaymentBot {
         int port = YamlManager.getConfig("web-server.port", Integer.class);
 
         try {
-            // Try to create a socket on the specified port
             ServerSocket serverSocket = new ServerSocket(port);
             serverSocket.close();
 
