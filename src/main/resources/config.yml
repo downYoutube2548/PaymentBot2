@@ -11,6 +11,8 @@ web-server:
   keystore-password: ""
   port: 8080
   path: "/webhook"
+  success-url: ""
+  cancel-url: ""
 
 discord-bot-token: "your-discord-token-here"
 

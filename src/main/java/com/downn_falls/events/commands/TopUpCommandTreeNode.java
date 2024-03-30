@@ -1,6 +1,7 @@
 package com.downn_falls.events.commands;
 
 import com.downn_falls.PaymentBot;
+import com.downn_falls.manager.YamlManager;
 import com.downn_falls.utils.Utils;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Price;
@@ -63,8 +64,8 @@ public class TopUpCommandTreeNode extends CommandTreeNode {
         if (price != null) {
             SessionCreateParams params =
                     SessionCreateParams.builder()
-                            .setSuccessUrl("http://140.99.98.15/payment_success.html")
-                            .setCancelUrl("http://140.99.98.15/payment_cancel.html")
+                            .setSuccessUrl(YamlManager.getConfig("web-server.success-url", String.class))
+                            .setCancelUrl(YamlManager.getConfig("web-server.cancel-url", String.class))
                             .addLineItem(
                                     SessionCreateParams.LineItem.builder()
                                             .setQuantity(1L)
